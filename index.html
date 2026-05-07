@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>신입 개발자 포트폴리오</title>
+    <meta
+      name="description"
+      content="프로젝트와 경험을 한 페이지에 정리한 신입 개발자 포트폴리오입니다."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#top">본문 바로가기</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#top" aria-label="홈으로 이동">
+          <span class="brand-mark">D</span>
+          <span>개발자 포트폴리오</span>
+        </a>
+        <div class="nav-shell">
+          <button
+            class="mobile-nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+          >
+            <span class="mobile-nav-label">소개</span>
+            <svg aria-hidden="true" viewBox="0 0 20 20">
+              <path d="M5 7.5 10 12l5-4.5" />
+            </svg>
+          </button>
+          <nav id="primary-navigation" class="nav-links" aria-label="주요 섹션">
+            <a href="#top">소개</a>
+            <a href="#experience">경험</a>
+            <a href="#skills">스킬</a>
+            <a href="#projects">프로젝트</a>
+          </nav>
+        </div>
+      </div>
+      <div class="scroll-progress" aria-hidden="true"></div>
+    </header>
+
+    <main id="top">
+      <section class="hero section">
+        <div class="hero-content">
+          <h1>꾸준히 배우고 끝까지 구현하는 신입 개발자</h1>
+          <p class="hero-copy">
+            사용자 흐름을 먼저 이해하고, 화면과 데이터가 자연스럽게 이어지는
+            웹 서비스를 만들기 위해 프로젝트로 경험을 쌓고 있습니다.
+          </p>
+        </div>
+
+        <aside class="profile-panel" aria-label="프로필 요약">
+          <div class="avatar" aria-hidden="true">DEV</div>
+          <div>
+            <p class="profile-name">이름을 입력하세요</p>
+            <p class="profile-role">프론트엔드 신입 개발자</p>
+          </div>
+          <dl id="profile-contact" class="profile-stats">
+            <div>
+              <dt>지원 분야</dt>
+              <dd>신입 지원</dd>
+            </div>
+            <div>
+              <dt>프로젝트</dt>
+              <dd>3개 대표 프로젝트</dd>
+            </div>
+            <div>
+              <dt>강점</dt>
+              <dd>React, API</dd>
+            </div>
+            <div class="profile-link-row">
+              <dt>깃허브</dt>
+              <dd>
+                <a class="profile-stat-link" href="https://github.com/your-id">github.com/your-id</a>
+              </dd>
+            </div>
+            <div class="profile-link-row">
+              <dt>Email</dt>
+              <dd>
+                <a class="profile-stat-link" href="mailto:your.email@example.com">your.email@example.com</a>
+              </dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section id="experience" class="section timeline-section">
+        <div class="section-heading">
+          <h2>경험</h2>
+        </div>
+        <ol class="section-body timeline">
+          <li>
+            <span>2026</span>
+            <div>
+              <h3>프로젝트 완성도 높이기</h3>
+              <p>반응형 UI, 상태 관리, API 연동을 한 흐름으로 묶어 실제로 사용할 수 있는 결과물을 만드는 데 집중했습니다.</p>
+            </div>
+          </li>
+          <li>
+            <span>2025</span>
+            <div>
+              <h3>프론트엔드 기본기 확장</h3>
+              <p>React와 TypeScript를 중심으로 컴포넌트 설계, 폼 처리, 데이터 시각화 프로젝트를 반복했습니다.</p>
+            </div>
+          </li>
+          <li>
+            <span>2024</span>
+            <div>
+              <h3>웹 개발 기초 학습</h3>
+              <p>HTML, CSS, JavaScript 기초를 익히고 작은 기능을 직접 만들며 웹 서비스 구조를 이해했습니다.</p>
+            </div>
+          </li>
+        </ol>
+        <div class="section-body growth-focus">
+          <article>
+            <h3>현재 집중하는 것</h3>
+            <p>접근성, 성능, 테스트 가능한 컴포넌트 구조를 프로젝트에 적용하는 연습을 하고 있습니다.</p>
+          </article>
+          <article>
+            <h3>다음 목표</h3>
+            <p>실제 서비스 운영 상황을 가정해 에러 처리, 로딩 상태, 배포 자동화까지 더 탄탄하게 다듬는 것입니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="skills" class="section">
+        <div class="section-heading">
+          <h2>스킬</h2>
+        </div>
+        <div class="section-body skill-grid">
+          <article class="skill-card">
+            <h3>프론트엔드</h3>
+            <p>React, TypeScript, Next.js, Zustand, TanStack Query</p>
+          </article>
+          <article class="skill-card">
+            <h3>백엔드</h3>
+            <p>Node.js, Express, NestJS, REST API, PostgreSQL</p>
+          </article>
+          <article class="skill-card">
+            <h3>배포와 도구</h3>
+            <p>Vercel, GitHub Actions, Docker Basics, AWS Basics</p>
+          </article>
+          <article class="skill-card">
+            <h3>협업</h3>
+            <p>Git, Jira, Notion, Figma, 코드 리뷰와 문서화</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="projects" class="section projects-section">
+        <div class="section-heading">
+          <h2>프로젝트</h2>
+        </div>
+
+        <div class="section-body project-list">
+          <article class="project-card featured">
+            <div class="project-topline">
+              <span class="project-type">대표 프로젝트</span>
+              <span class="project-period">2026.01 - 2026.04</span>
+            </div>
+            <h3>팀 협업 SaaS 대시보드</h3>
+            <p class="project-summary">
+              업무 상태, 팀 리소스, 주요 지표를 한 화면에서 확인할 수 있는
+              운영형 대시보드입니다. 복잡한 데이터를 빠르게 스캔할 수 있도록
+              정보 구조와 필터링 흐름을 개선했습니다.
+            </p>
+            <div class="project-detail-grid">
+              <div>
+                <h4>담당 역할</h4>
+                <p>프론트엔드 아키텍처 설계, 공통 컴포넌트 구축, API 연동</p>
+              </div>
+              <div>
+                <h4>주요 기능</h4>
+                <p>실시간 상태 카드, 팀별 필터, 권한별 화면, 반응형 테이블</p>
+              </div>
+              <div>
+                <h4>기술 스택</h4>
+                <p>React, TypeScript, TanStack Query, Node.js, PostgreSQL</p>
+              </div>
+              <div>
+                <h4>배운 점</h4>
+                <p>상태 관리 기준을 세우고, 반복 UI를 컴포넌트로 분리하는 경험을 쌓았습니다.</p>
+              </div>
+            </div>
+            <div class="project-links">
+              <button type="button" aria-disabled="true" aria-label="프로젝트 데모 링크">Demo</button>
+              <button type="button" aria-disabled="true" aria-label="프로젝트 GitHub 링크">GitHub</button>
+            </div>
+          </article>
+
+          <article class="project-card featured">
+            <div class="project-topline">
+              <span class="project-type">웹 앱</span>
+              <span class="project-period">2025.08 - 2025.11</span>
+            </div>
+            <h3>개인 금융 관리 서비스</h3>
+            <p class="project-summary">
+              사용자의 수입과 지출을 카테고리별로 분석하고 월별 예산을 관리하는
+              서비스입니다. 데이터 시각화와 입력 경험 개선에 집중했습니다.
+            </p>
+            <div class="project-detail-grid">
+              <div>
+                <h4>담당 역할</h4>
+                <p>프론트엔드 화면 설계, 차트 컴포넌트 구현, 입력 폼 UX 개선</p>
+              </div>
+              <div>
+                <h4>주요 기능</h4>
+                <p>월별 예산 관리, 카테고리별 지출 분석, 거래 내역 검색과 필터</p>
+              </div>
+              <div>
+                <h4>기술 스택</h4>
+                <p>Next.js, TypeScript, Recharts, Prisma, PostgreSQL</p>
+              </div>
+              <div>
+                <h4>배운 점</h4>
+                <p>차트 데이터 가공, 폼 검증, 사용자 입력 흐름을 함께 설계하는 방법을 익혔습니다.</p>
+              </div>
+            </div>
+            <div class="project-links">
+              <button type="button" aria-disabled="true" aria-label="프로젝트 데모 링크">Demo</button>
+              <button type="button" aria-disabled="true" aria-label="프로젝트 GitHub 링크">GitHub</button>
+            </div>
+          </article>
+
+          <article class="project-card featured">
+            <div class="project-topline">
+              <span class="project-type">모바일 웹</span>
+              <span class="project-period">2025.03 - 2025.06</span>
+            </div>
+            <h3>스터디 매칭 플랫폼</h3>
+            <p class="project-summary">
+              관심 분야와 일정 조건을 기반으로 스터디 그룹을 탐색하고 신청할 수
+              있는 플랫폼입니다. 검색, 신청, 알림 흐름을 구현했습니다.
+            </p>
+            <div class="project-detail-grid">
+              <div>
+                <h4>담당 역할</h4>
+                <p>모바일 중심 UI 구현, 검색 조건 설계, 신청 플로우 상태 관리</p>
+              </div>
+              <div>
+                <h4>주요 기능</h4>
+                <p>분야별 스터디 검색, 일정 조건 필터, 신청 승인, 알림 메시지</p>
+              </div>
+              <div>
+                <h4>기술 스택</h4>
+                <p>React, TypeScript, Firebase, Cloud Functions, Tailwind CSS</p>
+              </div>
+              <div>
+                <h4>배운 점</h4>
+                <p>모바일 화면에서 검색, 신청, 알림 흐름을 단순하게 연결하는 방식을 배웠습니다.</p>
+              </div>
+            </div>
+            <div class="project-links">
+              <button type="button" aria-disabled="true" aria-label="프로젝트 데모 링크">Demo</button>
+              <button type="button" aria-disabled="true" aria-label="프로젝트 GitHub 링크">GitHub</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <button class="top-button" type="button" aria-label="맨 위로 이동">
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M12 19V5M6 11l6-6 6 6" />
+      </svg>
+    </button>
+
+    <script src="content.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
