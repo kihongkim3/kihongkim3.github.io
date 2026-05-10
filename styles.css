@@ -113,7 +113,7 @@ button:focus-visible {
 
 .brand {
   color: var(--blue-900);
-  font-size: 1.16rem;
+  font-size: 1.28rem;
   font-weight: 800;
   letter-spacing: 0;
 }
@@ -345,6 +345,7 @@ h4 {
   overflow: hidden;
   gap: 1.18rem;
   padding: 1.55rem;
+  padding-bottom: 1.15rem;
 }
 
 .profile-panel::before {
@@ -1342,7 +1343,7 @@ h4 {
 
   .brand span:last-child {
     max-width: min(42vw, 9.5rem);
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .section {
