@@ -65,19 +65,19 @@ window.portfolioContent = {
     "items": [
       {
         "title": "프론트엔드",
-        "description": "Vue.js 프레임워크를 활용하여 REST API 기반 간단한 페이지 구현"
+        "description": "Vue.js 프레임워크 등을 활용하여 REST API 기반 간단한 페이지 구현"
       },
       {
         "title": "백엔드",
-        "description": "Spring 프레임워크를 활용하여 REST API 기반 간단한 서버 구현"
+        "description": "Spring 프레임워크 등을 활용하여 REST API 기반 간단한 서버 구현"
       },
       {
         "title": "데이터베이스",
-        "description": "MySQL을 활용하여 데이터베이스 구축 및 백엔드와 상호작용 구현"
+        "description": "MySQL 등을 활용하여 데이터베이스 구축 및 백엔드와 상호작용 구현"
       },
       {
         "title": "협업",
-        "description": "Git 활용, Google workspace 기반 문서화와 Notion 기반 작업 단위 정리"
+        "description": "Git 활용, Google Workspace 기반 문서화와 Notion 기반 작업 정리"
       }
     ]
   },
@@ -93,7 +93,7 @@ window.portfolioContent = {
         "details": [
           {
             "label": "문제 정의",
-            "value": "30대 신혼부부들이 집을 마련할 때 주변 상권을 중요하게 여긴다는 사실을 바탕으로 주제를 선정하여 아파트 매물 정보 뿐만 아니라 30대 신혼부부에게 적합한 특정 상권에 대한 정보를 제공할 수 있게 개발했습니다."
+            "value": "30대 신혼부부들이 집을 마련할 때 주변 상권을 중요하게 여긴다는 사실을 바탕으로 주제를 선정하여 아파트 매물 정보뿐만 아니라 30대 신혼부부에게 적합한 특정 상권에 대한 정보를 제공하기 위해 개발했습니다."
           },
           {
             "label": "구현 내용",
@@ -165,7 +165,7 @@ window.portfolioContent = {
           },
           {
             "label": "구현 내용",
-            "value": "내비게이션 고장 상황 모사와 개선 버전 다운로드 및 업데이트(PC3)"
+            "value": "내비게이션 고장 상황 모사와 개선 버전 다운로드 및 업데이트"
           },
           {
             "label": "기술 스택",
@@ -173,7 +173,7 @@ window.portfolioContent = {
           },
           {
             "label": "회고",
-            "value": "CANoe, CANdb, CAPL 등 모빌리티 분야에서 많이 사용되는 툴에 대한 사용법 및 서버 통신 방법에 대해서 학습했습니다."
+            "value": "CANoe, CANdb, CAPL 등 모빌리티 분야에서 많이 사용되는 도구에 대한 사용법 및 서버 통신 방법에 대해서 학습했습니다."
           }
         ],
         "links": [
@@ -212,11 +212,11 @@ window.portfolioContent = {
     "focus": [
       {
         "title": "현재 보완 중인 점",
-        "description": "기존에 학습해 온 이론적인 부분, 기술적인 부분에 AI 활용 능력을 더해 기술적 향상을 하고자 노력 중에 있습니다."
+        "description": "기존에 학습해 온 이론적인 부분, 기술적인 부분에 AI 활용 능력을 더해 기술적 향상을 하고자 노력 중입니다."
       },
       {
         "title": "입사 후 기여하고 싶은 부분",
-        "description": "AI를 활용한 서비스를 개발하여 실무를 진행함에 있어 업무 효율성과 편의성을 높이고 이를 바탕으로 회사와 함께 성장하고 싶습니다."
+        "description": "AI를 활용한 서비스를 개발하여 실무를 진행하는 데 있어 업무 효율성과 편의성을 높이고 이를 바탕으로 회사와 함께 성장하고 싶습니다."
       }
     ]
   }
