@@ -577,6 +577,8 @@ const mobileNavToggle = document.querySelector(".mobile-nav-toggle");
 const mobileNavLabel = document.querySelector(".mobile-nav-label");
 let navLinks = [];
 let sections = [];
+let lastTopButtonScrollY = window.scrollY;
+const mobileTopButtonQuery = window.matchMedia("(max-width: 620px)");
 
 const refreshNavigationTargets = () => {
   navLinks = Array.from(document.querySelectorAll(".nav-links a"));
@@ -586,7 +588,20 @@ const refreshNavigationTargets = () => {
 };
 
 const updateTopButton = () => {
-  topButton.classList.toggle("is-visible", window.scrollY > 520);
+  const currentScrollY = window.scrollY;
+  const scrollDelta = currentScrollY - lastTopButtonScrollY;
+
+  if (mobileTopButtonQuery.matches) {
+    if (currentScrollY <= 80 || scrollDelta > 4) {
+      topButton.classList.remove("is-visible");
+    } else if (currentScrollY > 240 && scrollDelta < -6) {
+      topButton.classList.add("is-visible");
+    }
+  } else {
+    topButton.classList.toggle("is-visible", currentScrollY > 520);
+  }
+
+  lastTopButtonScrollY = currentScrollY;
 };
 
 const updateScrollProgress = () => {
@@ -990,6 +1005,7 @@ document.addEventListener("click", (event) => {
 });
 
 topButton.addEventListener("click", () => {
+  topButton.classList.remove("is-visible");
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
@@ -1004,6 +1020,7 @@ window.addEventListener(
 );
 
 window.addEventListener("resize", () => {
+  updateTopButton();
   updateScrollProgress();
   scheduleProfileLayoutMode();
 });
