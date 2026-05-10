@@ -218,7 +218,7 @@ button:focus-visible {
   align-items: start;
   min-height: auto;
   padding-top: 6rem;
-  padding-bottom: 3.25rem;
+  padding-bottom: 5.25rem;
 }
 
 .hero-content {
@@ -1299,7 +1299,7 @@ h4 {
   .hero {
     min-height: auto;
     padding-top: 2rem;
-    padding-bottom: 3rem;
+    padding-bottom: 5.25rem;
   }
 
   h1 {
