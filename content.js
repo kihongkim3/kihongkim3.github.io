@@ -4,8 +4,7 @@ window.portfolioContent = {
     "description": "프로젝트와 경험을 한 페이지에 정리한 신입 개발자 포트폴리오입니다."
   },
   "brand": {
-    "mark": "D",
-    "name": "개발자 포트폴리오"
+    "name": "김기홍 포트폴리오"
   },
   "fontSizes": {},
   "nav": [
@@ -33,8 +32,6 @@ window.portfolioContent = {
   "profile": {
     "name": "김기홍",
     "role": "KIHONG KIM",
-    "image": "",
-    "avatarText": "DEV",
     "stats": [
       {
         "label": "지원 분야",
@@ -113,7 +110,7 @@ window.portfolioContent = {
         ],
         "links": [
           {
-            "label": "Demo",
+            "label": "PPT",
             "url": "https://drive.google.com/file/d/1Q8kr2-0PciNUaGnw18ctskomv9_Mgm35/view?usp=sharing"
           },
           {
@@ -147,7 +144,7 @@ window.portfolioContent = {
         ],
         "links": [
           {
-            "label": "Demo",
+            "label": "PPT",
             "url": "https://drive.google.com/file/d/1t4qUbyz1TyhWWndXNDkas-TKoB1ZK8d2/view?usp=sharing"
           },
           {
@@ -181,11 +178,11 @@ window.portfolioContent = {
         ],
         "links": [
           {
-            "label": "Demo",
+            "label": "PPT",
             "url": "https://drive.google.com/file/d/1Q4gew7Yenn9X-pZhCMNfMLzE30d5RCBK/view?usp=sharing"
           },
           {
-            "label": "GitHub",
+            "label": "Demo",
             "url": "https://drive.google.com/file/d/1U4DLodcmBm5QG7eB7VbldI4oMvSE1ksZ/view?usp=sharing"
           }
         ]

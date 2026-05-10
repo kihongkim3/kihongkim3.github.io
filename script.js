@@ -7,7 +7,7 @@ const escapeHtml = (value = "") =>
     .replaceAll("'", "&#039;");
 
 const toSectionLink = (target = "") => `#${target.replace(/^#/, "")}`;
-const storageKey = "junior-portfolio-content-v13";
+const storageKey = "junior-portfolio-content-v15";
 const defaultContent = structuredClone(window.portfolioContent);
 let isEditing = false;
 let editorToolbarCreated = false;
@@ -24,6 +24,27 @@ const normalizeUrl = (value = "") => {
 
   return url;
 };
+
+const projectLinkTypes = ["PPT", "Demo", "GitHub"];
+const projectLinkOrder = new Map(projectLinkTypes.map((label, index) => [label, index]));
+
+const getProjectLinkType = (label = "") => {
+  const normalizedLabel = String(label).trim().toLowerCase();
+
+  if (normalizedLabel === "ppt" || normalizedLabel.includes("slide")) return "PPT";
+  if (normalizedLabel === "demo" || normalizedLabel.includes("play")) return "Demo";
+  if (normalizedLabel === "github" || normalizedLabel === "git hub") return "GitHub";
+
+  return String(label || "Demo").trim();
+};
+
+const sortProjectLinks = (links = []) =>
+  links
+    .map((link) => ({ ...link, label: getProjectLinkType(link.label) }))
+    .sort(
+      (first, second) =>
+        (projectLinkOrder.get(first.label) ?? 99) - (projectLinkOrder.get(second.label) ?? 99)
+    );
 
 const deepMerge = (base, override) => {
   if (Array.isArray(base)) return Array.isArray(override) ? override : base;
@@ -50,12 +71,18 @@ const loadContent = () => {
 
 const applyProjectLinkDefaults = (content) => {
   content.projects?.items?.forEach((project, projectIndex) => {
-    project.links?.forEach((link, linkIndex) => {
-      const defaultUrl =
-        defaultContent.projects?.items?.[projectIndex]?.links?.[linkIndex]?.url || "";
+    project.links = sortProjectLinks(project.links || []);
+    const defaultLinks = sortProjectLinks(
+      defaultContent.projects?.items?.[projectIndex]?.links || []
+    );
 
-      if (!link.url && defaultUrl) {
-        link.url = defaultUrl;
+    project.links.forEach((link) => {
+      const defaultLink = defaultLinks.find(
+        (item) => getProjectLinkType(item.label) === getProjectLinkType(link.label)
+      );
+
+      if (!link.url && defaultLink?.url) {
+        link.url = defaultLink.url;
       }
     });
   });
@@ -63,7 +90,24 @@ const applyProjectLinkDefaults = (content) => {
   return content;
 };
 
-let portfolioContent = applyProjectLinkDefaults(loadContent());
+const removeUnusedVisualContent = (content) => {
+  if (content.brand) {
+    delete content.brand.mark;
+
+    if (!content.brand.name || content.brand.name === "개발자 포트폴리오") {
+      content.brand.name = "김기홍 포트폴리오";
+    }
+  }
+
+  if (content.profile) {
+    delete content.profile.image;
+    delete content.profile.avatarText;
+  }
+
+  return content;
+};
+
+let portfolioContent = removeUnusedVisualContent(applyProjectLinkDefaults(loadContent()));
 portfolioContent.fontSizes ||= {};
 
 const setByPath = (object, path, value) => {
@@ -82,11 +126,21 @@ const collectEditableContent = () => {
   });
 
   document.querySelectorAll("[data-edit-input]").forEach((input) => {
+    const path = input.dataset.editInput;
     const value = input.dataset.editInput.endsWith(".url")
       ? normalizeUrl(input.value)
       : input.value.trim();
 
-    setByPath(portfolioContent, input.dataset.editInput, value);
+    setByPath(portfolioContent, path, value);
+
+    const profileLinkUrlMatch = path.match(/^profile\.links\.(\d+)\.url$/);
+    if (profileLinkUrlMatch) {
+      const link = portfolioContent.profile?.links?.[Number(profileLinkUrlMatch[1])];
+
+      if (link) {
+        link.value = value.replace(/^mailto:/i, "").replace(/^https?:\/\//i, "");
+      }
+    }
   });
 };
 
@@ -116,40 +170,103 @@ const editable = (path, value) =>
     isEditing ? ' contenteditable="true" spellcheck="false"' : ""
   }>${escapeHtml(value)}`;
 
-const renderProjectLinks = (links = [], basePath = "") => {
-  const buttons = links
-    .map((link, index) => {
+const getProjectLinkIcon = (label = "") => {
+  const type = getProjectLinkType(label);
+
+  if (type === "PPT") {
+    return `
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M4.5 5.75h15v9.5h-15zM12 15.25v3.5M8.5 18.75h7M8 11.75l2.3-2.3 2.1 2.1 3.1-3.3" />
+      </svg>
+    `;
+  }
+
+  if (type === "Demo") {
+    return `
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" />
+        <path d="m10.2 8.7 5.2 3.3-5.2 3.3V8.7Z" />
+      </svg>
+    `;
+  }
+
+  return `
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path class="is-filled" d="M12 2.25c-5.4 0-9.75 4.35-9.75 9.75 0 4.32 2.8 7.98 6.68 9.27.49.09.67-.21.67-.47v-1.7c-2.72.59-3.29-1.16-3.29-1.16-.44-1.13-1.08-1.43-1.08-1.43-.89-.61.07-.6.07-.6.98.07 1.5 1.01 1.5 1.01.87 1.49 2.28 1.06 2.84.81.09-.63.34-1.06.62-1.3-2.17-.25-4.45-1.09-4.45-4.83 0-1.07.38-1.94 1.01-2.62-.1-.25-.44-1.25.1-2.59 0 0 .82-.26 2.68 1 .78-.22 1.62-.33 2.45-.33.83 0 1.67.11 2.45.33 1.86-1.26 2.68-1 2.68-1 .54 1.34.2 2.34.1 2.59.63.68 1.01 1.55 1.01 2.62 0 3.75-2.29 4.58-4.47 4.82.35.3.67.9.67 1.82v2.7c0 .26.18.57.68.47A9.76 9.76 0 0 0 21.75 12c0-5.4-4.35-9.75-9.75-9.75Z" />
+    </svg>
+  `;
+};
+
+const renderProjectLinks = (links = [], projectIndex = 0) => {
+  const normalizedLinks = sortProjectLinks(links);
+  const basePath = `projects.items.${projectIndex}.links`;
+  const buttons = normalizedLinks
+    .map((link) => {
       const href = normalizeUrl(link.url);
+      const label = getProjectLinkType(link.label);
+      const icon = getProjectLinkIcon(label);
 
       if (href) {
-        return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(
-          `${link.label} 링크`
-        )}">${escapeHtml(link.label)}</a>`;
+        return `<a class="project-icon-button" href="${escapeHtml(
+          href
+        )}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(
+          `${label} link`
+        )}" title="${escapeHtml(label)}">${icon}</a>`;
       }
 
-      return `<button type="button" aria-disabled="true" aria-label="${escapeHtml(
-        `${link.label} 링크`
-      )}">${escapeHtml(link.label)}</button>`;
+      return `<button class="project-icon-button is-disabled" type="button" aria-disabled="true" aria-label="${escapeHtml(
+        `${label} link empty`
+      )}" title="${escapeHtml(`${label} link empty`)}">${icon}</button>`;
     })
+    .join("");
+
+  const existingTypes = new Set(normalizedLinks.map((link) => getProjectLinkType(link.label)));
+  const addButtons = projectLinkTypes
+    .filter((label) => !existingTypes.has(label))
+    .map(
+      (label) => `
+        <button
+          class="project-link-add"
+          type="button"
+          data-project-link-action="add"
+          data-project-index="${projectIndex}"
+          data-link-label="${escapeHtml(label)}"
+        >${escapeHtml(label)} 추가</button>
+      `
+    )
     .join("");
 
   const fields = isEditing
     ? `<div class="project-link-fields">
-        ${links
+        ${normalizedLinks
           .map(
             (link, index) => `
-              <label class="project-link-field">
-                <span>${escapeHtml(link.label)} URL</span>
-                <input
-                  type="url"
-                  data-edit-input="${basePath}.${index}.url"
-                  value="${escapeHtml(link.url || "")}"
-                  placeholder="https://..."
-                />
-              </label>
+              <div class="project-link-field">
+                <label>
+                  <span>${escapeHtml(getProjectLinkType(link.label))} URL</span>
+                  <input
+                    type="url"
+                    data-edit-input="${basePath}.${index}.url"
+                    value="${escapeHtml(link.url || "")}"
+                    placeholder="https://..."
+                  />
+                </label>
+                <button
+                  class="project-link-remove"
+                  type="button"
+                  data-project-link-action="remove"
+                  data-project-index="${projectIndex}"
+                  data-link-index="${index}"
+                >삭제</button>
+              </div>
             `
           )
           .join("")}
+        ${
+          addButtons
+            ? `<div class="project-link-add-row" aria-label="프로젝트 링크 추가">${addButtons}</div>`
+            : ""
+        }
       </div>`
     : "";
 
@@ -162,51 +279,91 @@ const getProfileLinkValue = (link = {}) =>
 const getProfileLinkAttributes = (href = "") =>
   /^https?:/i.test(href) ? ' target="_blank" rel="noopener noreferrer"' : "";
 
-const renderProfileLinks = (links = []) =>
-  links
-    .map((link, index) => {
+const getProfileLinkIcon = (link = {}, href = "") => {
+  const key = `${link.label || ""} ${link.url || ""}`.toLowerCase();
+
+  if (key.includes("github") || key.includes("깃허브")) {
+    return `
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M12 2.25c-5.4 0-9.75 4.35-9.75 9.75 0 4.32 2.8 7.98 6.68 9.27.49.09.67-.21.67-.47v-1.7c-2.72.59-3.29-1.16-3.29-1.16-.44-1.13-1.08-1.43-1.08-1.43-.89-.61.07-.6.07-.6.98.07 1.5 1.01 1.5 1.01.87 1.49 2.28 1.06 2.84.81.09-.63.34-1.06.62-1.3-2.17-.25-4.45-1.09-4.45-4.83 0-1.07.38-1.94 1.01-2.62-.1-.25-.44-1.25.1-2.59 0 0 .82-.26 2.68 1 .78-.22 1.62-.33 2.45-.33.83 0 1.67.11 2.45.33 1.86-1.26 2.68-1 2.68-1 .54 1.34.2 2.34.1 2.59.63.68 1.01 1.55 1.01 2.62 0 3.75-2.29 4.58-4.47 4.82.35.3.67.9.67 1.82v2.7c0 .26.18.57.68.47A9.76 9.76 0 0 0 21.75 12c0-5.4-4.35-9.75-9.75-9.75Z" />
+      </svg>
+    `;
+  }
+
+  if (
+    href.startsWith("mailto:") ||
+    key.includes("email") ||
+    key.includes("이메일") ||
+    key.includes("@")
+  ) {
+    return `
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M4.75 5.75h14.5A2.25 2.25 0 0 1 21.5 8v8a2.25 2.25 0 0 1-2.25 2.25H4.75A2.25 2.25 0 0 1 2.5 16V8a2.25 2.25 0 0 1 2.25-2.25Zm0 1.75a.5.5 0 0 0-.5.5v.35l7.44 4.65c.19.12.43.12.62 0l7.44-4.65V8a.5.5 0 0 0-.5-.5H4.75Zm15 3.02-6.51 4.07a2.34 2.34 0 0 1-2.48 0L4.25 10.52V16c0 .28.22.5.5.5h14.5a.5.5 0 0 0 .5-.5v-5.48Z" />
+      </svg>
+    `;
+  }
+
+  return `
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M8.75 17.75 16.5 10m0 0H10m6.5 0v6.5M6.75 5.75h10.5c.55 0 1 .45 1 1v10.5c0 .55-.45 1-1 1H6.75c-.55 0-1-.45-1-1V6.75c0-.55.45-1 1-1Z" />
+    </svg>
+  `;
+};
+
+const renderProfileIconLinks = (links = [], includeEmptyLinks = false) => {
+  const iconLinks = links
+    .map((link) => {
       const href = normalizeUrl(link.url);
       const value = getProfileLinkValue(link);
+      const icon = getProfileLinkIcon(link, href);
 
-      if (!isEditing) {
-        if (!href) {
-          return `
-            <div class="profile-link-row">
-              <dt>${escapeHtml(link.label)}</dt>
-              <dd class="profile-link-empty">${escapeHtml(value)}</dd>
-            </div>
-          `;
-        }
-
+      if (href) {
         return `
-          <div class="profile-link-row">
-            <dt>${escapeHtml(link.label)}</dt>
-            <dd>
-              <a
-                class="profile-stat-link"
-                href="${escapeHtml(href)}"
-                aria-label="${escapeHtml(`${link.label} 링크`)}"
-                ${getProfileLinkAttributes(href)}
-              >${escapeHtml(value)}</a>
-            </dd>
-          </div>
+          <a
+            class="profile-icon-link"
+            href="${escapeHtml(href)}"
+            aria-label="${escapeHtml(`${link.label} 링크`)}"
+            title="${escapeHtml(value)}"
+            ${getProfileLinkAttributes(href)}
+          >${icon}</a>
         `;
       }
 
+      if (!includeEmptyLinks) return "";
+
       return `
-        <div class="profile-link-row is-editing-link">
-          <dt ${editable(
-              `profile.links.${index}.label`,
-              link.label
-            )}</dt>
-          <dd>
-            <span ${editable(
-              `profile.links.${index}.value`,
-              value
-            )}</span>
-          </dd>
-          <label class="profile-link-field">
-            <span>URL</span>
+        <button
+          class="profile-icon-link is-disabled"
+          type="button"
+          aria-disabled="true"
+          aria-label="${escapeHtml(`${link.label} 링크 비어 있음`)}"
+          title="${escapeHtml(`${link.label} URL 비어 있음`)}"
+        >${icon}</button>
+      `;
+    })
+    .join("");
+
+  return iconLinks
+    ? `
+      <div class="profile-icon-row">
+        <dt class="profile-icon-label">연락 링크</dt>
+        <dd class="profile-icon-list">${iconLinks}</dd>
+      </div>
+    `
+    : "";
+};
+
+const renderProfileLinks = (links = []) => {
+  if (!isEditing) {
+    return renderProfileIconLinks(links);
+  }
+
+  const fields = links
+    .map(
+      (link, index) => `
+        <div class="profile-link-field">
+          <label>
+            <span>${escapeHtml(link.label || "링크")} URL</span>
             <input
               type="text"
               data-edit-input="profile.links.${index}.url"
@@ -215,9 +372,40 @@ const renderProfileLinks = (links = []) =>
             />
           </label>
         </div>
-      `;
-    })
+      `
+    )
     .join("");
+
+  return `
+    ${renderProfileIconLinks(links, true)}
+    <div class="profile-link-fields" aria-label="소개 링크 URL 수정">
+      ${fields}
+    </div>
+  `;
+};
+
+let profileLayoutFrame = 0;
+
+const updateProfileLayoutMode = () => {
+  const panel = document.querySelector(".profile-panel");
+  if (!panel) return;
+
+  panel.classList.remove("is-compact-profile");
+
+  const links = Array.from(
+    panel.querySelectorAll(".profile-stat-link, .profile-link-empty")
+  );
+  const shouldUseCompactLayout = links.some(
+    (link) => link.scrollWidth > link.clientWidth + 1
+  );
+
+  panel.classList.toggle("is-compact-profile", shouldUseCompactLayout);
+};
+
+const scheduleProfileLayoutMode = () => {
+  window.cancelAnimationFrame(profileLayoutFrame);
+  profileLayoutFrame = window.requestAnimationFrame(updateProfileLayoutMode);
+};
 
 const renderPortfolio = (content) => {
   if (!content) return;
@@ -229,14 +417,18 @@ const renderPortfolio = (content) => {
     description.setAttribute("content", content.meta.description);
   }
 
-  document.querySelector(".brand-mark").textContent = content.brand?.mark || "D";
-  document.querySelector(".brand span:last-child").textContent =
-    content.brand?.name || "개발자 포트폴리오";
+  document.querySelector(".brand-title").outerHTML = `
+    <span class="brand-title" ${editable(
+      "brand.name",
+      content.brand?.name || "김기홍 포트폴리오"
+    )}</span>
+  `;
 
   document.querySelector(".nav-links").innerHTML = content.nav
     .map(
       (item, index) =>
-        `<a href="${toSectionLink(item.target)}" data-edit="nav.${index}.label">${escapeHtml(
+        `<a href="${toSectionLink(item.target)}" ${editable(
+          `nav.${index}.label`,
           item.label
         )}</a>`
     )
@@ -247,20 +439,8 @@ const renderPortfolio = (content) => {
     <p class="hero-copy" ${editable("hero.description", content.hero.description)}</p>
   `;
 
-  const avatarMarkup = content.profile.image
-    ? `<img src="${escapeHtml(content.profile.image)}" alt="${escapeHtml(
-        `${content.profile.name} 프로필 이미지`
-      )}" />`
-    : escapeHtml(content.profile.avatarText || "DEV");
-  const avatarAttributes = isEditing
-    ? 'data-avatar-edit="true" role="button" tabindex="0" aria-label="프로필 이미지 변경"'
-    : `aria-hidden="${content.profile.image ? "false" : "true"}"`;
-
   document.querySelector(".profile-panel").innerHTML = `
-    <div class="avatar${isEditing ? " is-editable-avatar" : ""}" ${avatarAttributes}>
-      ${avatarMarkup}
-    </div>
-    <div>
+    <div class="profile-meta">
       <p class="profile-name" ${editable("profile.name", content.profile.name)}</p>
       <p class="profile-role" ${editable("profile.role", content.profile.role)}</p>
     </div>
@@ -343,7 +523,7 @@ const renderPortfolio = (content) => {
                   .join("")}
               </div>
               <div class="project-links">
-                ${renderProjectLinks(project.links, `projects.items.${projectIndex}.links`)}
+                ${renderProjectLinks(project.links, projectIndex)}
               </div>
             </article>
           `
@@ -385,6 +565,7 @@ const renderPortfolio = (content) => {
     </div>
   `;
 
+  scheduleProfileLayoutMode();
 };
 
 renderPortfolio(portfolioContent);
@@ -468,6 +649,8 @@ const closeMobileNav = () => {
 const bindNavigationEvents = () => {
   navLinks.forEach((link) => {
     link.addEventListener("click", () => {
+      if (isEditing) return;
+
       navLinks.forEach((item) => item.classList.remove("is-active"));
       link.classList.add("is-active");
       if (mobileNavLabel) {
@@ -527,7 +710,6 @@ const createEditorToolbar = ({ startEditing = false } = {}) => {
       <button class="editor-font-reset" type="button">기본</button>
     </div>
     <span class="editor-status" aria-live="polite"></span>
-    <input class="editor-image-input" type="file" accept="image/*" hidden />
   `;
   document.body.append(toolbar);
 
@@ -541,7 +723,6 @@ const createEditorToolbar = ({ startEditing = false } = {}) => {
   const fontResetButton = toolbar.querySelector(".editor-font-reset");
   const fontStatus = toolbar.querySelector(".editor-font-status");
   const status = toolbar.querySelector(".editor-status");
-  const imageInput = toolbar.querySelector(".editor-image-input");
 
   let statusTimer;
   let activeEditPath = "";
@@ -611,21 +792,6 @@ const createEditorToolbar = ({ startEditing = false } = {}) => {
     syncFontTools();
   };
 
-  const bindAvatarEditor = () => {
-    const avatar = document.querySelector("[data-avatar-edit='true']");
-    if (!avatar) return;
-
-    const openImagePicker = () => imageInput.click();
-
-    avatar.addEventListener("click", openImagePicker);
-    avatar.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-
-      event.preventDefault();
-      openImagePicker();
-    });
-  };
-
   const bindTextSizeEditor = () => {
     document
       .querySelectorAll("[data-edit][contenteditable='true']")
@@ -635,12 +801,50 @@ const createEditorToolbar = ({ startEditing = false } = {}) => {
       });
   };
 
+  const bindProjectLinkEditor = () => {
+    document.querySelectorAll("[data-project-link-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const projectIndex = Number(button.dataset.projectIndex);
+        const project = portfolioContent.projects?.items?.[projectIndex];
+        if (!project) return;
+
+        collectEditableContent();
+        project.links = sortProjectLinks(project.links || []);
+
+        if (button.dataset.projectLinkAction === "add") {
+          const label = getProjectLinkType(button.dataset.linkLabel);
+          const hasLink = project.links.some(
+            (link) => getProjectLinkType(link.label) === label
+          );
+
+          if (!hasLink) {
+            project.links.push({ label, url: "" });
+            project.links = sortProjectLinks(project.links);
+            showStatus(`${label} 버튼 추가됨`);
+          }
+        }
+
+        if (button.dataset.projectLinkAction === "remove") {
+          const linkIndex = Number(button.dataset.linkIndex);
+
+          if (Number.isInteger(linkIndex) && project.links[linkIndex]) {
+            const label = getProjectLinkType(project.links[linkIndex].label);
+            project.links.splice(linkIndex, 1);
+            showStatus(`${label} 버튼 삭제됨`);
+          }
+        }
+
+        rerender();
+      });
+    });
+  };
+
   const rerender = () => {
     renderPortfolio(portfolioContent);
     refreshNavigationTargets();
     bindNavigationEvents();
-    bindAvatarEditor();
     bindTextSizeEditor();
+    bindProjectLinkEditor();
     updateActiveNav();
     syncToolbar();
   };
@@ -732,20 +936,6 @@ const createEditorToolbar = ({ startEditing = false } = {}) => {
     showStatus("content.js 다운로드됨");
   });
 
-  imageInput.addEventListener("change", () => {
-    const [file] = imageInput.files;
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.addEventListener("load", () => {
-      portfolioContent.profile.image = reader.result;
-      saveToBrowser();
-      rerender();
-    });
-    reader.readAsDataURL(file);
-    imageInput.value = "";
-  });
-
   resetButton.addEventListener("click", () => {
     const shouldReset = window.confirm("브라우저에 저장된 수정 내용을 초기화할까요?");
     if (!shouldReset) return;
@@ -762,8 +952,8 @@ const createEditorToolbar = ({ startEditing = false } = {}) => {
   }
 
   syncToolbar();
-  bindAvatarEditor();
   bindTextSizeEditor();
+  bindProjectLinkEditor();
 };
 
 const bindHiddenEditorUnlock = () => {
@@ -794,7 +984,7 @@ document.addEventListener("click", (event) => {
 
   const target = event.target instanceof Element ? event.target : null;
   const link = target?.closest("a");
-  if (link && !link.classList.contains("brand")) {
+  if (link) {
     event.preventDefault();
   }
 });
@@ -813,7 +1003,18 @@ window.addEventListener(
   { passive: true }
 );
 
-window.addEventListener("resize", updateScrollProgress);
+window.addEventListener("resize", () => {
+  updateScrollProgress();
+  scheduleProfileLayoutMode();
+});
+window.addEventListener("load", scheduleProfileLayoutMode);
+
+if ("ResizeObserver" in window) {
+  const profilePanel = document.querySelector(".profile-panel");
+  if (profilePanel) {
+    new ResizeObserver(scheduleProfileLayoutMode).observe(profilePanel);
+  }
+}
 
 refreshNavigationTargets();
 bindNavigationEvents();
